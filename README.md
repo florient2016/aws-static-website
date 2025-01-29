@@ -15,7 +15,7 @@ This guide details how to set up a **static website** on Amazon S3 using AWS CLI
 
 ### 📝 **Steps Overview**
 1. **Create IAM User (`toto`)** with full access to S3.
-2. **Create an S3 Bucket** named `toto123456789`.
+2. **Create an S3 Bucket** named `toto412345678`.
 3. **Upload `index.html`** to the bucket.
 4. **Apply Public Read Policy** to serve the website.
 5. **Test Access** using `curl`.
@@ -65,19 +65,35 @@ Create a file `policy.json` with the following content:
 }
 ```
 
-Breaking Down the Policy
-Key	Description
-"Version": "2012-10-17"	Defines the policy language version. The latest version is "2012-10-17" (always use this for new policies).
-"Effect": "Allow"	Grants permission (in this case, allowing access).
-"Principal": "*"	The wildcard * means this policy applies to anyone (public access).
-"Action": "s3:GetObject"	Specifies the action allowed by this policy: s3:GetObject lets users retrieve objects (files) from the bucket.
-"Resource": "arn:aws:s3:::toto412345678/*"	Specifies the bucket and all its objects (/* means all files inside the bucket).
-
-
 Apply the policy:
 ```bash
 aws s3api put-bucket-policy --bucket toto412345678 --policy file://policy.json
 ```
+
+### **Explanation of `policy.json`**
+The `policy.json` file is an **S3 bucket policy** that allows public read access to objects stored in the S3 bucket. This is necessary to serve a static website from S3, making files like `index.html` accessible via a web browser.
+
+#### **Breaking Down the Policy**
+| **Key**         | **Description** |
+|-----------------|---------------|
+| `"Version": "2012-10-17"` | Defines the policy language version. The latest version is `"2012-10-17"` (always use this for new policies). |
+| `"Effect": "Allow"` | Grants permission (in this case, allowing access). |
+| `"Principal": "*"` | The wildcard `*` means this policy applies to **anyone** (public access). |
+| `"Action": "s3:GetObject"` | Specifies the action allowed by this policy: `s3:GetObject` lets users retrieve objects (files) from the bucket. |
+| `"Resource": "arn:aws:s3:::toto412345678/*"` | Specifies the bucket and all its objects (`/*` means all files inside the bucket). |
+
+### **Why Is This Policy Needed?**
+By default, Amazon S3 **blocks public access** to objects in a bucket. This policy explicitly allows public users to access the files in the `toto412345678` bucket via HTTP.
+
+Without this policy, users would get an **Access Denied (403 Forbidden)** error when trying to access the website.
+
+### **Security Considerations**
+🚨 **WARNING**: This policy makes the entire bucket publicly readable. If your bucket contains **private data**, do **NOT** use this policy. Instead, consider:
+- Restricting access to specific IPs.
+- Using **CloudFront** with signed URLs for controlled access.
+- Enabling S3 Access Logs to monitor who accesses your content.
+
+---
 
 ### **5️⃣ Enable Static Website Hosting**
 ```bash
