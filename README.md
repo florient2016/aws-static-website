@@ -65,6 +65,15 @@ Create a file `policy.json` with the following content:
 }
 ```
 
+Breaking Down the Policy
+Key	Description
+"Version": "2012-10-17"	Defines the policy language version. The latest version is "2012-10-17" (always use this for new policies).
+"Effect": "Allow"	Grants permission (in this case, allowing access).
+"Principal": "*"	The wildcard * means this policy applies to anyone (public access).
+"Action": "s3:GetObject"	Specifies the action allowed by this policy: s3:GetObject lets users retrieve objects (files) from the bucket.
+"Resource": "arn:aws:s3:::toto412345678/*"	Specifies the bucket and all its objects (/* means all files inside the bucket).
+
+
 Apply the policy:
 ```bash
 aws s3api put-bucket-policy --bucket toto412345678 --policy file://policy.json
