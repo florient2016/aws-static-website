@@ -49,7 +49,30 @@ Upload the file to S3:
 aws s3 cp index.html s3://toto412345678/
 ```
 
-### **4️⃣ Apply Public Access Policy (`policy.json`)**
+### **4️⃣ Disable Public IP Block on the Bucket**
+```bash
+aws s3api put-public-access-block --bucket toto412345678 --public-access-block-configuration BlockPublicAcls=false,BlockPublicPolicy=false,IgnorePublicAcls=false,RestrictPublicBuckets=false
+```
+
+### **Verify the Setting:**
+After running the command, check the bucket’s public access settings with:
+```bash
+aws s3api get-public-access-block --bucket toto412345678
+```
+If successfully disabled, the output should be:
+```json
+{
+    "PublicAccessBlockConfiguration": {
+        "BlockPublicAcls": false,
+        "BlockPublicPolicy": false,
+        "IgnorePublicAcls": false,
+        "RestrictPublicBuckets": false
+    }
+}
+```
+
+
+### **5️⃣ Apply Public Access Policy (`policy.json`)**
 Create a file `policy.json` with the following content:
 ```json
 {
